@@ -20,3 +20,19 @@ function _useIsIntersecting(targetRef, { root, rootMargin, threshold }, enabled)
 export function useIsIntersecting(targetRef, options) {
   return _useIsIntersecting(targetRef, options, true)
 }
+
+export function useWasIntersecting(targetRef, options) {
+  const [wasIntersecting, setWasIntersecting] = React.useState(false)
+  const isIntersecting = _useIsIntersecting(targetRef, options, !wasIntersecting)
+
+  React.useEffect(
+    () => {
+      if (isIntersecting && !wasIntersecting) {
+        setWasIntersecting(true)
+      }
+    },
+    [isIntersecting, wasIntersecting]
+  )
+
+  return wasIntersecting
+}
