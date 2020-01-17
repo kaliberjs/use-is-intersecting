@@ -1,23 +1,22 @@
-export function useIsIntersecting(targetRef, { root, rootMargin, threshold }) {
-  const [isIntersecting, setIntersecting] = React.useState(false)
-  const observerRef = React.useRef(null)
+function _useIsIntersecting(targetRef, { root, rootMargin, threshold }, enabled) {
+  const [isIntersecting, setIsIntersecting] = React.useState(false)
 
   React.useEffect(() => {
-    observerRef.current = new IntersectionObserver(handleIntersection, { root, rootMargin, threshold })
+    if (!enabled) return
 
-    return () => observerRef.current.disconnect()
+    const observer = new IntersectionObserver(handleIntersection, { root, rootMargin, threshold })
+    observer.observe(targetRef.current)
+
+    return () => observer.disconnect()
 
     function handleIntersection([entry]) {
-      setIntersecting(entry.isIntersecting)
+      setIsIntersecting(entry.isIntersecting)
     }
-  }, [root, rootMargin, threshold])
-
-  React.useEffect(() => {
-    const subject = targetRef.current
-    observerRef.current.observe(subject)
-
-    return () => observerRef.current.unobserve(subject)
-  }, [targetRef, root, rootMargin, threshold])
+  }, [targetRef, root, rootMargin, threshold, enabled])
 
   return isIntersecting
+}
+
+export function useIsIntersecting(targetRef, options) {
+  return _useIsIntersecting(targetRef, options, true)
 }
