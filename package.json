@@ -1,0 +1,33 @@
+{
+  "name": "@kaliber/use-is-intersecting",
+  "version": "0.0.0",
+  "main": "src/index.js",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "hook",
+    "viewport",
+    "visible"
+  ],
+  "files": [
+    "src/**",
+    "LICENSE",
+    "readme.md",
+    "package.json"
+  ],
+  "private": false,
+  "license": "MIT",
+  "description": "Returns whether an element intersects with a parent element, using the IntersectionObserver",
+  "repository": "https://github.com/kaliberjs/use-is-intersecting.git",
+  "contributors": [
+    "Joost Kiens <joost@kaliber.net>",
+    "Peeke Kuepers <peeke@kaliber.net> (https://peeke.nl)"
+  ],
+  "devDependencies": {
+    "@kaliber/build": "^0.0.101"
+  }
+}
