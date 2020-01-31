@@ -38,7 +38,7 @@ function useIsIntersectingBase({ root = null, rootMargin = undefined, threshold 
       if (!enabled) return
       if (!observerRef.current) {
         // @ts-ignore
-        observerRef.current = new window.IntersectionObserver(callback, { root, rootMargin, threshold })
+        observerRef.current = new window.IntersectionObserver(handleIntersectionObservation, { root, rootMargin, threshold })
       }
       if (targetRef.current) observerRef.current.unobserve(targetRef.current)
       if (node) observerRef.current.observe(node)
@@ -49,22 +49,22 @@ function useIsIntersectingBase({ root = null, rootMargin = undefined, threshold 
 
   React.useEffect(
     () => {
+      // If ref changed, that means the registered IntersectionObserver changed. 
+      // We have to re-observe the targetRef in that case.
       ref(targetRef.current)
-      return cleanup
+
+      return () => {
+        if (!observerRef.current) return
+        observerRef.current.disconnect()
+        observerRef.current = null
+      }
     },
     [ref]
   )
 
   return { isIntersecting, ref }
 
-  function cleanup() {
-    if (observerRef.current) {
-      observerRef.current.disconnect()
-      observerRef.current = null
-    }
-  }
-
-  function callback([entry]) {
+  function handleIntersectionObservation([entry]) {
     setIsIntersecting(entry.isIntersecting)
   }
 }
