@@ -1,40 +1,58 @@
-function _useIsIntersecting({ root, rootMargin, threshold }, enabled) {
+export function useIsIntersecting(options = {}) {
+  return useIsIntersectingBase(options, true)
+}
+
+export function useWasIntersecting(options = {}) {
+  const [wasIntersecting, setWasIntersecting] = React.useState(false)
+  const { ref, isIntersecting } = useIsIntersectingBase(options, !wasIntersecting)
+
+  React.useEffect(
+    () => {
+      if (isIntersecting && !wasIntersecting) {
+        setWasIntersecting(true)
+      }
+    },
+    [isIntersecting, wasIntersecting]
+  )
+
+  return { ref, wasIntersecting }
+}
+
+export function useIsInViewport(options = {}) {
+  const { ref, isIntersecting } = useIsIntersecting({ ...options, root: null })
+  return { ref, isInViewport: isIntersecting }
+}
+
+export function useWasInViewport(options = {}) {
+  const { ref, wasIntersecting } = useWasIntersecting({ ...options, root: null })
+  return { ref, wasInViewport: wasIntersecting }
+}
+
+function useIsIntersectingBase({ root = null, rootMargin = undefined, threshold = undefined } = {}, enabled) {
   const [isIntersecting, setIsIntersecting] = React.useState(false)
   const observerRef = React.useRef(null)
   const targetRef = React.useRef(null)
 
-  const observe = React.useCallback(
+  const ref = React.useCallback(
     node => {
-      if (targetRef.current) observerRef.current.unobserve(targetRef.current)
-      if (node) observerRef.current.observe(node)
-      targetRef.current = node
-    },
-    []
-  )
-
-  React.useEffect(
-    () => {
       if (!enabled) return
       if (!observerRef.current) {
         // @ts-ignore
         observerRef.current = new window.IntersectionObserver(callback, { root, rootMargin, threshold })
       }
-
-      if (targetRef.current) {
-        observe(targetRef.current)
-      }
-
-      return cleanup
+      if (targetRef.current) observerRef.current.unobserve(targetRef.current)
+      if (node) observerRef.current.observe(node)
+      targetRef.current = node
     },
-    [observe, enabled, root, rootMargin, threshold]
+    [root, rootMargin, threshold, enabled]
   )
 
-  const ref = React.useCallback(
-    node => {
-      if (!enabled) return
-      observe(node)
+  React.useEffect(
+    () => {
+      ref(targetRef.current)
+      return cleanup
     },
-    [observe, enabled]
+    [ref]
   )
 
   return { isIntersecting, ref }
@@ -49,32 +67,4 @@ function _useIsIntersecting({ root, rootMargin, threshold }, enabled) {
   function callback([entry]) {
     setIsIntersecting(entry.isIntersecting)
   }
-}
-
-export function useIsIntersecting(options) {
-  return _useIsIntersecting(options, true)
-}
-
-export function useWasIntersecting(options) {
-  const [wasIntersecting, setWasIntersecting] = React.useState(false)
-  const isIntersecting = _useIsIntersecting(options, !wasIntersecting)
-
-  React.useEffect(
-    () => {
-      if (isIntersecting && !wasIntersecting) {
-        setWasIntersecting(true)
-      }
-    },
-    [isIntersecting, wasIntersecting]
-  )
-
-  return wasIntersecting
-}
-
-export function useIsInViewport({ root, ...options }) {
-  return useIsIntersecting({ ...options, root: null })
-}
-
-export function useWasInViewport({ root, ...options }) {
-  return useWasIntersecting({ ...options, root: null })
 }
