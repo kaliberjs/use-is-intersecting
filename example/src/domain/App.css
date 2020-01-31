@@ -1,0 +1,22 @@
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 300vh !important;
+  padding: 10vmin;
+  color: white;
+
+  & > :not(:last-child) {
+    margin-bottom: 20px;
+  }
+}
+
+.box {
+  padding: 20px;
+  background-image: linear-gradient(178.2deg, rgba(10,34,231,1) -7.4%, rgba(223,9,142,1) 71.6%);
+  position: relative;
+
+  &.isRevealed {
+    opacity: 1;
+  }
+}

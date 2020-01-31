@@ -37,10 +37,10 @@ export function useWasIntersecting(targetRef, options) {
   return wasIntersecting
 }
 
-export function useIsInViewport(targetRef, { root, ...options }) {
-  return useIsIntersecting(targetRef, options)
+export function useIsInViewport(targetRef, options = {}) {
+  return useIsIntersecting(targetRef, { ...options, root: null })
 }
 
-export function useWasInViewport(targetRef, { root, ...options }) {
-  return useWasIntersecting(targetRef, options)
+export function useWasInViewport(targetRef, options = {}) {
+  return useWasIntersecting(targetRef, { ...options, root: null })
 }
