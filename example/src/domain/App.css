@@ -1,22 +1,59 @@
 .app {
+  position: relative;
+  z-index: 0;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   height: 300vh !important;
-  padding: 10vmin;
   color: white;
+
+  &::before {
+    content: '';
+    position: fixed;
+    z-index: 1;
+    border: 1px solid rgba(10,34,231,1);
+  }
 
   & > :not(:last-child) {
     margin-bottom: 20px;
   }
+
+  & > .element {
+    margin-top: 92.5vh;
+  }
+
+  & > .button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+  }
 }
 
-.box {
-  padding: 20px;
-  background-image: linear-gradient(178.2deg, rgba(10,34,231,1) -7.4%, rgba(223,9,142,1) 71.6%);
-  position: relative;
+.morePadding {
+  &::before {
+    top: 25%;
+    left: 25%;
+    right: 25%;
+    bottom: 25%;
+  }
+}
+
+.lessPadding {
+  &::before {
+    top: 10%;
+    left: 10%;
+    right: 10%;
+    bottom: 10%;
+  }
+}
+
+.element {
+  width: 200px !important;
+  height: 200px !important;
+  background-color: rgba(223,9,142,1);
+  transition: background-color .35s;
 
   &.isRevealed {
-    opacity: 1;
+    background-color: rgba(10,34,231,1);
   }
 }
