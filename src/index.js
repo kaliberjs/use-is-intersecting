@@ -1,4 +1,5 @@
 import { useObservedRef } from './use-observed-ref'
+export { useIsInViewport, useWasInViewport } from './use-is-in-viewport'
 
 export function useIsIntersecting({ rootMargin, threshold, disabled = undefined }) {
   const [root, setRoot] = React.useState(null)
@@ -38,18 +39,28 @@ export function useWasIntersecting({ rootMargin, threshold }) {
   return { wasIntersecting: isIntersecting, ref, rootRef }
 }
 
-export function useIsIntersectingElement() {
-  
-}
+export function useRootMargin() {
+  const ref = React.useRef(null)
+  const [rootMargin, setRootMargin] = React.useState('0px')
 
-export function useIsInViewport({ rootMargin, threshold, disabled = undefined }) {
-  const { isIntersecting: isInViewport, ref } = useIsIntersecting({ rootMargin, threshold, disabled })
-  return { isInViewport, ref }
-}
+  React.useEffect(
+    () => {
+      window.addEventListener('resize', updateRootMargin)
 
-export function useWasInViewport({ rootMargin, threshold }) {
-  const { wasIntersecting: wasInViewport, ref } = useWasIntersecting({ rootMargin, threshold })
-  return { wasInViewport, ref }
+      updateRootMargin()
+
+      return () => {
+        window.removeEventListener('resize', updateRootMargin)
+      }
+
+      function updateRootMargin()  {
+        setRootMargin(deriveCenterPointRootMargin(ref.current)) 
+      }
+    },
+    [ref.current]
+  )
+
+  return { ref, rootMargin }
 }
 
 export function deriveRootMargin(element, root) {

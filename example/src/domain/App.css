@@ -1,25 +1,19 @@
 .app {
   position: relative;
   z-index: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 300vh !important;
   color: white;
-
-  &::before {
-    content: '';
-    position: fixed;
-    z-index: 1;
-    border: 1px solid rgba(10,34,231,1);
-  }
+  overflow-y: auto;
 
   & > :not(:last-child) {
     margin-bottom: 20px;
   }
 
-  & > .element {
-    margin-top: 92.5vh;
+  & > .rootMargin {
+    position: fixed;
+  }
+
+  & > .section {
+    height: 87.5vh;
   }
 
   & > .button {
@@ -29,31 +23,74 @@
   }
 }
 
-.morePadding {
-  &::before {
-    top: 25%;
-    left: 25%;
-    right: 25%;
-    bottom: 25%;
+.button {
+  all: unset;
+  background-color: rgba(223,9,142,1);
+  color: white;
+  padding: 1rem;
+  transition: background-color .35s, color .35s;
+  cursor: pointer;
+
+  &.isInverted {
+    background-color: white;
+    color: rgba(223,9,142,1);
   }
 }
 
-.lessPadding {
-  &::before {
-    top: 10%;
-    left: 10%;
-    right: 10%;
-    bottom: 10%;
+.section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  & > .element {
+    margin: 2rem;
   }
+}
+
+.sectionSolid {
+  background: linear-gradient(rgba(223,9,142,1), rgba(10,34,231,1));
 }
 
 .element {
+  box-sizing: border-box;
   width: 200px !important;
   height: 200px !important;
+  padding: 2rem;
   background-color: rgba(223,9,142,1);
   transition: background-color .35s;
 
   &.isRevealed {
     background-color: rgba(10,34,231,1);
+  }
+}
+
+.rootMargin {
+  position: relative;
+  pointer-events: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: fixed;
+    z-index: 1;
+    border: 1px solid;
+    border-top-color: lime;
+    border-left-color: lime;
+    border-right-color: orange;
+    border-bottom-color: orange;
+  }
+
+  &::before {
+    top: -1px;
+    bottom: -1px;
+    left: inherit;
+    right: inherit;
+  }
+
+  &::after {
+    left: -1px;
+    right: -1px;
+    top: inherit;
+    bottom: inherit;
   }
 }
