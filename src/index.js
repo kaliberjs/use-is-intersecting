@@ -1,70 +1,85 @@
-export function useIsIntersecting(options = {}) {
-  return useIsIntersectingBase(options, true)
-}
+import { useObservedRef } from './use-observed-ref'
 
-export function useWasIntersecting(options = {}) {
-  const [wasIntersecting, setWasIntersecting] = React.useState(false)
-  const { ref, isIntersecting } = useIsIntersectingBase(options, !wasIntersecting)
-
-  React.useEffect(
-    () => {
-      if (isIntersecting && !wasIntersecting) {
-        setWasIntersecting(true)
-      }
-    },
-    [isIntersecting, wasIntersecting]
-  )
-
-  return { ref, wasIntersecting }
-}
-
-export function useIsInViewport(options = {}) {
-  const { ref, isIntersecting } = useIsIntersecting({ ...options, root: null })
-  return { ref, isInViewport: isIntersecting }
-}
-
-export function useWasInViewport(options = {}) {
-  const { ref, wasIntersecting } = useWasIntersecting({ ...options, root: null })
-  return { ref, wasInViewport: wasIntersecting }
-}
-
-function useIsIntersectingBase({ root = null, rootMargin = undefined, threshold = undefined } = {}, enabled) {
+export function useIsIntersecting({ rootMargin, threshold, disabled = undefined }) {
+  const [root, setRoot] = React.useState(null)
   const [isIntersecting, setIsIntersecting] = React.useState(false)
-  const observerRef = React.useRef(null)
-  const targetRef = React.useRef(null)
-
-  const ref = React.useCallback(
-    node => {
-      if (!enabled) return
-      if (!observerRef.current) {
-        // @ts-ignore
-        observerRef.current = new window.IntersectionObserver(handleIntersectionObservation, { root, rootMargin, threshold })
-      }
-      if (targetRef.current) observerRef.current.unobserve(targetRef.current)
-      if (node) observerRef.current.observe(node)
-      targetRef.current = node
+  const createObserver = React.useCallback(
+    () => {
+      // @ts-ignore
+      return new window.IntersectionObserver(
+        ([entry]) => {
+          setIsIntersecting(entry.isIntersecting);
+        },
+        { root, rootMargin, threshold }
+      )
     },
-    [root, rootMargin, threshold, enabled]
-  )
+    [root, rootMargin, threshold]
+  );
+
+  const reset = React.useCallback(() => { setIsIntersecting(false) }, [])
+  const ref = useObservedRef({ createObserver, reset, disabled })
+
+  return { isIntersecting, ref, rootRef: setRoot }
+}
+
+export function useWasIntersecting({ rootMargin, threshold }) {
+  const [disabled, setDisabled] = React.useState(false)
+  const { isIntersecting, ref, rootRef } = useIsIntersecting({ rootMargin, threshold, disabled })
 
   React.useEffect(
     () => {
-      // If ref changed, that means the registered IntersectionObserver changed. 
-      // We have to re-observe the targetRef in that case.
-      ref(targetRef.current)
-
-      return () => {
-        if (!observerRef.current) return
-        observerRef.current.disconnect()
-        observerRef.current = null
+      if (isIntersecting) {
+        setDisabled(true)
       }
     },
-    [ref]
+    [isIntersecting]
   )
 
-  return { isIntersecting, ref }
+  return { wasIntersecting: isIntersecting, ref, rootRef }
+}
 
-  function handleIntersectionObservation([entry]) {
-    setIsIntersecting(entry.isIntersecting)
-  }
+export function useIsIntersectingElement() {
+  
+}
+
+export function useIsInViewport({ rootMargin, threshold, disabled = undefined }) {
+  const { isIntersecting: isInViewport, ref } = useIsIntersecting({ rootMargin, threshold, disabled })
+  return { isInViewport, ref }
+}
+
+export function useWasInViewport({ rootMargin, threshold }) {
+  const { wasIntersecting: wasInViewport, ref } = useWasIntersecting({ rootMargin, threshold })
+  return { wasInViewport, ref }
+}
+
+export function deriveRootMargin(element, root) {
+  const { top, right, bottom, left } = element.getBoundingClientRect()
+  const width = (root || document.body).offsetWidth
+  const height = (root || document.body).offsetHeight
+  return [top, width - right, height - bottom, left].map(x => `-${x}px`).join(' ')
+}
+
+export function deriveCenterPointRootMargin(element, root) {
+  const { top, right, bottom, left } = element.getBoundingClientRect()
+  const x = (left + right) / 2
+  const y = (top + bottom) / 2
+  const width = root ? root.offsetWidth : document.body.clientWidth
+  const height = root ? root.offsetHeight : window.innerHeight
+
+  return [y, width - x - 1, height - y - 1, x].map(x => `-${x}px`).join(' ')
+}
+
+export function visualizeRootMargin(rootMargin) {
+  if (!rootMargin) return { top: '', right: '', bottom: '', left: '' }
+
+  // Split the rootMargin into parts, but flip the sign (positive becomes negative and vice versa)
+  const [top, right, bottom, left] = rootMargin.split(' ').map(x => `-${x}`).map(x => x.replace('--', ''))
+  const styles = { top, right, bottom, left }
+  
+  if (!styles.top) { styles.top = '' }
+  if (!styles.right) { styles.right = styles.top }
+  if (!styles.bottom) { styles.bottom = styles.top }
+  if (!styles.left) { styles.left = styles.right }
+
+  return styles
 }
