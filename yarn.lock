@@ -2,3 +2,7 @@
 # yarn lockfile v1
 
 
+"@kaliber/use-observed-ref@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@kaliber/use-observed-ref/-/use-observed-ref-1.0.0.tgz#5616fdeb04059be7c3ae7427829d66696f410aee"
+  integrity sha512-a7ivIxhcUZ3Ytk9dtbLKPFZV9rFOVGCkVIwHpvjjd1+dJA3MZ3aBHPbORoYB/gYoI7zUvGAkPEPLPJuQuRFZ3Q==

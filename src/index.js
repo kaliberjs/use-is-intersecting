@@ -1,5 +1,4 @@
-import { useObservedRef } from './use-observed-ref'
-export { useIsInViewport, useWasInViewport } from './use-is-in-viewport'
+import { useObservedRef } from '@kaliber/use-observed-ref'
 
 export function useIsIntersecting({ rootMargin, threshold, disabled = undefined }) {
   const [root, setRoot] = React.useState(null)

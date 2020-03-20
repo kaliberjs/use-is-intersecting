@@ -1,8 +1,8 @@
 # useIsIntersecting
-Check whether an element intersects with its parent
+Check whether an element intersects with its root element
 
 ## Motivation
-Reports wether an element is intersecting a parent element using the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). This is more performant and easier to use than listening to `scroll` and `resize` events and measuring the current offset using `getBoundingClientRect`. One of the main usecases of this hook is to check wether an element falls within the browsers viewport.
+Reports wether an element is intersecting a root element using the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). This is more performant and easier to use than listening to `scroll` and `resize` events and even responds to element resizing, which might not trigger these events. 
 
 ## Polyfill
 The `IntersectionObserver` is [supported by most current browsers](https://caniuse.com/#search=intersectionobserver). If you need wider support, there is a [polyfill](https://www.npmjs.com/package/intersection-observer) available through polyfill.io.

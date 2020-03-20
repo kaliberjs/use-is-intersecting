@@ -26,5 +26,8 @@
   "contributors": [
     "Joost Kiens <joost@kaliber.net>",
     "Peeke Kuepers <peeke@kaliber.net> (https://peeke.nl)"
-  ]
+  ],
+  "dependencies": {
+    "@kaliber/use-observed-ref": "^1.0.0"
+  }
 }
