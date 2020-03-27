@@ -8,7 +8,7 @@ export default function App() {
   const rootMargin = useLargeRootMargin ? '-25%' : '-10%'
   const { ref: isIntersectingRef, rootRef: isIntersectingRootRef, isIntersecting } = useIsIntersecting({ rootMargin })
   const { ref: wasIntersectingRef, rootRef: wasIntersectingRootRef, wasIntersecting } = useWasIntersecting({ rootMargin })
-  const viewportRef = composeRefs(isIntersectingRootRef, wasIntersectingRootRef)
+  const rootRef = composeRefs(isIntersectingRootRef, wasIntersectingRootRef)
 
   const { ref: buttonRef, rootMargin: buttonRootMargin } = useRootMargin()
   const { ref: section1Ref, isInViewport: section1IsIntersecting } = useIsInViewport({ rootMargin: buttonRootMargin })
@@ -18,7 +18,7 @@ export default function App() {
   const buttonRootMarginStyles = visualizeRootMargin(buttonRootMargin)
 
   return (
-    <div ref={viewportRef} className={styles.app}>
+    <div ref={rootRef} className={styles.app}>
       <div className={styles.rootMargin} style={rootMarginStyles} />
       <div className={styles.rootMargin} style={buttonRootMarginStyles} />
       <button

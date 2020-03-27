@@ -1,13 +1,16 @@
 import { useObservedRef } from '@kaliber/use-observed-ref'
+import { getNodeDepth } from './getNodeDepth'
 
-export function useIsIntersecting({ rootMargin, threshold, disabled = undefined }) {
+export function useIsIntersecting({ rootMargin = undefined, threshold = undefined, disabled = undefined }) {
   const [root, setRoot] = React.useState(null)
   const [isIntersecting, setIsIntersecting] = React.useState(false)
+  const [depth, setDepth] = React.useState(-1)
   const createObserver = React.useCallback(
     () => {
       // @ts-ignore
       return new window.IntersectionObserver(
         ([entry]) => {
+          setDepth(getNodeDepth(root || document.documentElement, entry.element))
           setIsIntersecting(entry.isIntersecting);
         },
         { root, rootMargin, threshold }
@@ -19,7 +22,7 @@ export function useIsIntersecting({ rootMargin, threshold, disabled = undefined 
   const reset = React.useCallback(() => { setIsIntersecting(false) }, [])
   const ref = useObservedRef({ createObserver, reset, disabled })
 
-  return { isIntersecting, ref, rootRef: setRoot }
+  return { isIntersecting, depth, ref, rootRef: setRoot }
 }
 
 export function useWasIntersecting({ rootMargin, threshold }) {
@@ -38,38 +41,37 @@ export function useWasIntersecting({ rootMargin, threshold }) {
   return { wasIntersecting: isIntersecting, ref, rootRef }
 }
 
-export function useRootMargin() {
-  const ref = React.useRef(null)
+export function useIsIntersectingFixedElement() { 
+  const cleanupRef = React.useRef(null)
   const [rootMargin, setRootMargin] = React.useState('0px')
 
-  React.useEffect(
-    () => {
-      window.addEventListener('resize', updateRootMargin)
+  const targetRef = React.useCallback(
+    node => {
+      cleanupRef.current && cleanupRef.current()
 
-      updateRootMargin()
+      if (node) {
+        updateRootMargin()
 
-      return () => {
-        window.removeEventListener('resize', updateRootMargin)
+        window.addEventListener('resize', updateRootMargin)
+        cleanupRef.current = () => {
+          window.removeEventListener('resize', updateRootMargin)
+          cleanupRef.current = null
+        }
       }
 
       function updateRootMargin()  {
-        setRootMargin(deriveCenterPointRootMargin(ref.current)) 
+        setRootMargin(findPointRootMargin(node)) 
       }
     },
-    [ref.current]
+    []
   )
 
-  return { ref, rootMargin }
+  const { ref } = useIsIntersecting({ rootMargin })
+  
+  return { ref, targetRef }
 }
 
-export function deriveRootMargin(element, root) {
-  const { top, right, bottom, left } = element.getBoundingClientRect()
-  const width = (root || document.body).offsetWidth
-  const height = (root || document.body).offsetHeight
-  return [top, width - right, height - bottom, left].map(x => `-${x}px`).join(' ')
-}
-
-export function deriveCenterPointRootMargin(element, root) {
+export function findPointRootMargin(element, root) {
   const { top, right, bottom, left } = element.getBoundingClientRect()
   const x = (left + right) / 2
   const y = (top + bottom) / 2
