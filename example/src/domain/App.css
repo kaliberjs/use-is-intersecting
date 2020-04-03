@@ -1,54 +1,65 @@
 .app {
   position: relative;
-  z-index: 0;
-  color: white;
-  overflow-y: auto;
-
-  & > :not(:last-child) {
-    margin-bottom: 20px;
-  }
+  display: flex;
+  padding: 10vmax;
 
   & > .rootMargin {
     position: fixed;
   }
 
-  & > .section {
-    height: 87.5vh;
-  }
-
-  & > .button {
-    position: fixed;
+  & > .rootMarginInput {
+    position: absolute;
     top: 20px;
     left: 20px;
   }
-}
 
-.button {
-  all: unset;
-  background-color: rgba(223,9,142,1);
-  color: white;
-  padding: 1rem;
-  transition: background-color .35s, color .35s;
-  cursor: pointer;
-
-  &.isInverted {
-    background-color: white;
-    color: rgba(223,9,142,1);
+  & > .scrollWrapper {
+    width: 100%;
   }
 }
 
-.section {
+.scrollWrapper {
+  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
 
-  & > .element {
-    margin: 2rem;
+  & > .rootMargin {
+    position: static;
+  }
+
+  & > .scroll {
+    width: 100%;
   }
 }
 
-.sectionSolid {
-  background: linear-gradient(rgba(223,9,142,1), rgba(10,34,231,1));
+.scroll {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  background-color: #eee;
+
+  & > * {
+    flex-shrink: 0;
+  }
+
+  & > :not(:last-child) {
+    margin-right: 5rem;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    width: 95%;
+    height: 100%;
+    flex-shrink: 0;
+  }
+}
+
+.rootMarginInput {
+  background-color: white;
+  border: 2px solid rgba(223,9,142,1);
+  color: rgba(223,9,142,1);
+  padding: 1rem;
 }
 
 .element {
@@ -56,11 +67,12 @@
   width: 200px !important;
   height: 200px !important;
   padding: 2rem;
-  background-color: rgba(223,9,142,1);
+  color: white;
   transition: background-color .35s;
+  background-color: rgba(10,34,231,1);
 
   &.isRevealed {
-    background-color: rgba(10,34,231,1);
+    background-color: rgba(223,9,142,1);
   }
 }
 
@@ -71,26 +83,24 @@
   &::before,
   &::after {
     content: '';
-    position: fixed;
-    z-index: 1;
-    border: 1px solid;
-    border-top-color: lime;
-    border-left-color: lime;
-    border-right-color: orange;
-    border-bottom-color: orange;
+    position: absolute;
   }
 
   &::before {
-    top: -1px;
-    bottom: -1px;
+    top: 0;
+    bottom: 0;
     left: inherit;
     right: inherit;
+    border-left: 1px solid lime;
+    border-right: 1px solid orange;
   }
 
   &::after {
-    left: -1px;
-    right: -1px;
+    left: 0;
+    right: 0;
     top: inherit;
     bottom: inherit;
+    border-top: 1px solid lime;
+    border-bottom: 1px solid orange;
   }
 }
