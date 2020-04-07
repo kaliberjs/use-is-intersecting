@@ -35,7 +35,7 @@ export function useWasIntersecting({ root, rootMargin, threshold }) {
 export function visualizeRootMargin(rootMargin) {
   if (!rootMargin) return { top: '', right: '', bottom: '', left: '' }
 
-  // Split the rootMargin into parts, but flip the sign (positive becomes negative and vice versa)
+  // Split the rootMargin into value strings, but flip the sign (positive becomes negative and vice versa)
   const [top, right, bottom, left] = rootMargin.split(' ').map(x => `-${x}`).map(x => x.replace('--', ''))
   const styles = { top, right, bottom, left }
   
