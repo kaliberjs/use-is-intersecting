@@ -3,14 +3,11 @@ import { useObservedRef } from '@kaliber/use-observed-ref'
 export function useIsIntersecting({ root = null, rootMargin = undefined, threshold = undefined, disabled = undefined }) {
   const [isIntersecting, setIsIntersecting] = React.useState(false)
   const createObserver = React.useCallback(
-    () => {
-      console.log(root, rootMargin)
-      // @ts-ignore
-      return new window.IntersectionObserver(
-        ([entry]) => { setIsIntersecting(entry.isIntersecting) },
-        { root, rootMargin, threshold }
-      )
-    },
+    // @ts-ignore
+    () => new window.IntersectionObserver(
+      ([entry]) => { setIsIntersecting(entry.isIntersecting) },
+      { root, rootMargin, threshold }
+    ),
     [root, rootMargin, threshold]
   );
 
