@@ -27,7 +27,7 @@
     "Joost Kiens <joost@kaliber.net>",
     "Peeke Kuepers <peeke@kaliber.net> (https://peeke.nl)"
   ],
-  "devDependencies": {
-    "@kaliber/build": "^0.0.101"
+  "dependencies": {
+    "@kaliber/use-observed-ref": "^1.0.0"
   }
 }
