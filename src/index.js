@@ -1,6 +1,6 @@
 import { useObservedRef } from '@kaliber/use-observed-ref'
 
-export function useIsIntersecting({ root = null, rootMargin = undefined, threshold = undefined, disabled = undefined }) {
+export function useIsIntersecting({ root = null, rootMargin = undefined, threshold = undefined, disabled = undefined } = {}) {
   const [isIntersecting, setIsIntersecting] = React.useState(false)
   const [wasIntersecting, setWasIntersecting] = React.useState(false)
   const createObserver = React.useCallback(
@@ -21,7 +21,7 @@ export function useIsIntersecting({ root = null, rootMargin = undefined, thresho
   return { ref, isIntersecting, wasIntersecting }
 }
 
-export function useWasIntersecting({ root, rootMargin, threshold }) {
+export function useWasIntersecting({ root = null, rootMargin = undefined, threshold = undefined } = {}) {
   const [disabled, setDisabled] = React.useState(false)
   const { ref, wasIntersecting } = useIsIntersecting({ root, rootMargin, threshold, disabled })
 
