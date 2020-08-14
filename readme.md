@@ -52,6 +52,29 @@ export default function App() {
 }
 ```
 
+The `useIsIntersecting` hook also returns wether an element has been intersecting in the past (`wasIntersecting`). The main difference with the dedicated `useWasIntersecting` hook is that the IntersectionObserver doesn't get cleaned up, since the hook still has to track wether the element is currently intersecting. This can be useful if you want to pause an expensive operation, but also want the element to have a reveal animation.
+
+```jsx
+export default function App() {
+  const [root, setRoot] = React.useState(null)
+  const { ref: elementRef, isIntersecting, wasIntersecting } = useIsIntersecting({ root })
+
+  return (
+    <div>
+      <div className={styles.scrollWrapper}>
+        <div ref={setRoot} className={styles.scroll}>
+          <div ref={elementRef} className={cx(wasIntersecting && styles.isRevealed)}>
+            {isIntersecting 
+              ? 'Is in intersection root element'  
+              : 'Is not in intersection root element'}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
 ![](https://media.giphy.com/media/H9TLJHctw7Efm/giphy.gif)
 
 ## Disclaimer

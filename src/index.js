@@ -2,10 +2,14 @@ import { useObservedRef } from '@kaliber/use-observed-ref'
 
 export function useIsIntersecting({ root = null, rootMargin = undefined, threshold = undefined, disabled = undefined } = {}) {
   const [isIntersecting, setIsIntersecting] = React.useState(false)
+  const [wasIntersecting, setWasIntersecting] = React.useState(false)
   const createObserver = React.useCallback(
     // @ts-ignore
     () => new window.IntersectionObserver(
-      ([entry]) => { setIsIntersecting(entry.isIntersecting) },
+      ([entry]) => { 
+        setIsIntersecting(entry.isIntersecting) 
+        setWasIntersecting(wasIntersecting => wasIntersecting || entry.isIntersecting) 
+      },
       { root, rootMargin, threshold }
     ),
     [root, rootMargin, threshold]
@@ -14,17 +18,17 @@ export function useIsIntersecting({ root = null, rootMargin = undefined, thresho
   const reset = React.useCallback(() => { setIsIntersecting(false) }, [])
   const ref = useObservedRef({ createObserver, reset, disabled })
 
-  return { ref, isIntersecting }
+  return { ref, isIntersecting, wasIntersecting }
 }
 
 export function useWasIntersecting({ root = null, rootMargin = undefined, threshold = undefined } = {}) {
   const [disabled, setDisabled] = React.useState(false)
-  const { ref, isIntersecting } = useIsIntersecting({ root, rootMargin, threshold, disabled })
+  const { ref, wasIntersecting } = useIsIntersecting({ root, rootMargin, threshold, disabled })
 
   React.useEffect(
-    () => { isIntersecting && setDisabled(true) },
-    [isIntersecting]
+    () => { wasIntersecting && setDisabled(true) },
+    [wasIntersecting]
   )
 
-  return { wasIntersecting: isIntersecting, ref }
+  return { wasIntersecting, ref }
 }
